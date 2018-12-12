@@ -16,9 +16,9 @@ public interface TreeNode {
 
     void remove(TreeNode child); // удалить один дочерний элемент
 
-    List<TreeNode> getChild(); // дочерних элементов может быть любое количество
+    List<TreeNode> getChilds(); // дочерних элементов может быть любое количество
 
-    TreeNode getChild(long id); // получение дочернего элемента по id
+    TreeNode getChilds(long id); // получение дочернего элемента по id
 
     TreeNode getParent(); // получение родительского элемента - пригодится в разных ситуациях,
     // например  для отчетности по всем узлам деревьев
