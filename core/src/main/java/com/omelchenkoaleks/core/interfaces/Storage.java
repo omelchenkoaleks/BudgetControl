@@ -12,7 +12,6 @@ import java.util.Map;
 public interface Storage extends TreeNode {
 
 
-    /*   ПОЛУЧЕНИЕ БАЛАНСА   */
 
     // остаток по каждой валюте в хранилище
     Map<Currency, BigDecimal> getCurrencyAmounts();
@@ -24,7 +23,6 @@ public interface Storage extends TreeNode {
     BigDecimal getApproxAmount(Currency currency) throws CurrencyException;
 
 
-    /*   ИЗМЕНЕНИЕ БАЛАНСА (ОСТАТКА)   */
 
     // изменение баланса по определенной валюте
     void changeAmount(BigDecimal amount, Currency currency) throws CurrencyException;
@@ -37,7 +35,6 @@ public interface Storage extends TreeNode {
             throws CurrencyException, AmountException;
 
 
-    /*   РАБОТА С ВАЛЮТОЙ   */
 
     // добавить новую валюту в хранилище
     void addCurrency(Currency currency) throws CurrencyException;

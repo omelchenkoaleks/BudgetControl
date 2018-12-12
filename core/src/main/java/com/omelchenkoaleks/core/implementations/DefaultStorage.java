@@ -19,7 +19,6 @@ public class DefaultStorage extends AbstractTreeNode implements Storage {
     private  List<Currency> currencyList = new ArrayList<>();
 
 
-    /*   КОНСТРУКТОРЫ   */
 
     public DefaultStorage() {}
 
@@ -46,8 +45,6 @@ public class DefaultStorage extends AbstractTreeNode implements Storage {
     }
 
 
-    /*   ГЕТЕРЫ И СЕТЕРЫ   */
-
     @Override
     public Map<Currency, BigDecimal> getCurrencyAmounts() {
         return currencyAmounts;
@@ -68,7 +65,6 @@ public class DefaultStorage extends AbstractTreeNode implements Storage {
 
 
 
-    /*   ОПЕРАЦИИ С ВАЛЮТОЙ   */
 
     @Override
     public void addCurrency(Currency currency) throws CurrencyException {

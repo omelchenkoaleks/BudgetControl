@@ -2,6 +2,7 @@ package com.omelchenkoaleks.core.implementations.operations;
 
 import com.omelchenkoaleks.core.abstracts.AbstractOpetation;
 import com.omelchenkoaleks.core.interfaces.Source;
+import com.omelchenkoaleks.core.interfaces.Storage;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
