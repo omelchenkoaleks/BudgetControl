@@ -16,6 +16,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,8 +34,7 @@ public class StorageDAOImpl implements StorageDAO {
     public boolean addCurrency(Storage storage, Currency currency) {
 
         // для автоматического закрытия ресурсов
-        try (PreparedStatement stmt = com.omelchenkoaleks.core.database.SQLiteConnection.getConnection()
-                .prepareStatement("insert into " + CURRENCY_TABLE + "(currency_code, storage_id, amount) values(?,?,?");) {
+        try (PreparedStatement stmt = SQLiteConnection.getConnection().prepareStatement("insert into " + CURRENCY_TABLE + "(currency_code, storage_id, amount) values(?,?,?)");) {
 
             stmt.setString(1, currency.getCurrencyCode());
             stmt.setLong(2, storage.getId());
@@ -77,8 +77,14 @@ public class StorageDAOImpl implements StorageDAO {
         return false;
     }
 
+//    @Override
+//    public boolean updateAmount(Storage storage, BigDecimal amount) {
+//        return false;
+//    }
+
+
     @Override
-    public boolean updateAmount(Storage storage, BigDecimal amount) {
+    public boolean updateAmount(Storage storage, Currency currency, BigDecimal amount) {
         return false;
     }
 
