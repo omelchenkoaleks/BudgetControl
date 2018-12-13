@@ -5,5 +5,5 @@ dependencies {
     implementation 'org.xerial:sqlite-jdbc:3.25.2'
 }
 
-sourceCompatibility = "7"
-targetCompatibility = "7"
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'

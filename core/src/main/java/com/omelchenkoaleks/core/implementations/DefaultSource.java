@@ -3,7 +3,7 @@ package com.omelchenkoaleks.core.implementations;
 import com.omelchenkoaleks.core.abstracts.AbstractTreeNode;
 import com.omelchenkoaleks.core.interfaces.Source;
 import com.omelchenkoaleks.core.interfaces.TreeNode;
-import com.omelchenkoaleks.core.objects.OperationType;
+import com.omelchenkoaleks.core.enums.OperationType;
 
 import java.util.List;
 

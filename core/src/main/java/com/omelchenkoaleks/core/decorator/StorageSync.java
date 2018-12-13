@@ -11,12 +11,12 @@ import java.util.List;
 /*
     синхронизирует все действия между объектами коллекции и базой данных (Декоратор)
  */
-public class StorageSynchronizer implements StorageDAO {
+public class StorageSync implements StorageDAO {
 
     private StorageDAO storageDAO;
     private List<Storage> storageList;
 
-    public StorageSynchronizer(StorageDAO storageDAO) {
+    public StorageSync(StorageDAO storageDAO) {
         this.storageDAO = storageDAO;
         init();
     }
