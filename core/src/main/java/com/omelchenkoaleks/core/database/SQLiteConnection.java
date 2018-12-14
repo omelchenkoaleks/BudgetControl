@@ -20,8 +20,10 @@ public class SQLiteConnection {
 
             String url = "jdbc:sqlite:D:\\DBsqlite_arhiv\\money.db";
 
-            if (connection == null) connection = DriverManager.getConnection(url);
-
+            if (connection == null) {
+                connection = DriverManager.getConnection(url);
+            }
+            connection.createStatement().execute("PRAGMA foreign_keys = ON");
             return connection;
 
 

@@ -4,7 +4,8 @@ import com.omelchenkoaleks.core.interfaces.TreeNode;
 
 import java.util.List;
 
-public class TreeConstructor<T extends TreeNode> {
+// построитель дерева
+public class TreeUtils<T extends TreeNode> {
 
     public void addToTree(long parentId, T newNode, List<T> storageList) {
         if (parentId != 0) {
@@ -25,7 +26,7 @@ public class TreeConstructor<T extends TreeNode> {
     }
 
     private TreeNode recursiveSearch(long parentId, TreeNode child) {
-        for (TreeNode node : child.getChilds()) {
+        for (TreeNode node : child.getChild()) {
             if (node.getId() == parentId) {
                 return node;
             } else if (node.hasChilds()) {

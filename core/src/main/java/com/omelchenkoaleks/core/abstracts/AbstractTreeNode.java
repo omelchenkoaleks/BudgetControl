@@ -12,6 +12,7 @@ public abstract class AbstractTreeNode implements TreeNode {
     private TreeNode patent;
     private String name;
     private List<TreeNode> childs = new ArrayList<>();
+    private long parentId;
 
 
     public AbstractTreeNode() {}
@@ -51,6 +52,14 @@ public abstract class AbstractTreeNode implements TreeNode {
         childs.add(child);
     }
 
+    public long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(long parentId) {
+        this.parentId = parentId;
+    }
+
     @Override
     public void setParent(TreeNode parent) {
         this.patent = parent;
@@ -67,7 +76,7 @@ public abstract class AbstractTreeNode implements TreeNode {
     }
 
     @Override
-    public List<TreeNode> getChilds() {
+    public List<TreeNode> getChild() {
         return childs;
     }
 
@@ -81,34 +90,27 @@ public abstract class AbstractTreeNode implements TreeNode {
     }
 
     @Override
-    public TreeNode getChilds(long id) {
+    public TreeNode getChild(long id) {
 
         for (TreeNode child: childs) {
             if (child.getId() == id) {
                 return child;
             }
         }
-
         return null;
     }
 
     @Override
     public boolean hasChilds() {
-        return !childs.isEmpty(); // если есть дочерние элементы - вернуть true
+        return !childs.isEmpty();
     }
 
-    // если нам нужно будет представить этот объект в виде строки, он вернет нам имя этого узла
     @Override
     public String toString() {
         return name;
     }
 
-    /**
-     * Важное переопределение двух методов:
-     * теперь, когда эти методы будут сравнивать объекты внутри коллекции для удвления
-     * они будут брать уникальный идентификатор и определять (не по имени, потому что имя
-     * может совпадать)
-     */
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -119,7 +121,6 @@ public abstract class AbstractTreeNode implements TreeNode {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(id);
     }
 }

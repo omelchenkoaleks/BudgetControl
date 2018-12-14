@@ -4,7 +4,6 @@ import com.omelchenkoaleks.core.dao.interfaces.StorageDAO;
 import com.omelchenkoaleks.core.database.SQLiteConnection;
 import com.omelchenkoaleks.core.implementations.DefaultStorage;
 import com.omelchenkoaleks.core.interfaces.Storage;
-import com.omelchenkoaleks.core.utils.TreeConstructor;
 
 import org.sqlite.SQLiteException;
 
@@ -16,31 +15,59 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
 public class StorageDAOImpl implements StorageDAO {
 
-    private static final String CURRENCY_TABLE = "currency_amount";
+    private static final String CURRENCY_AMOUNT_TABLE = "currency_amount";
     private static final String STORAGE_TABLE = "storage";
 
-    private TreeConstructor<Storage> treeConstructor = new TreeConstructor();
-
     private List<Storage> storageList = new ArrayList<>();
+
+
+    @Override
+    public List<Storage> getAll() {
+        storageList.clear();
+
+        try (Statement stmt = SQLiteConnection.getConnection().createStatement();
+             ResultSet rs = stmt.executeQuery("select * from " + STORAGE_TABLE + " order by parent_id")) {
+
+            while (rs.next()) {
+                DefaultStorage storage = new DefaultStorage();
+                storage.setId(rs.getLong("id"));
+                storage.setName(rs.getString("name"));
+                storage.setParentId(rs.getLong("parent_id"));
+                storageList.add(storage);
+            }
+
+            return storageList;
+
+
+        } catch (SQLiteException e) {
+            Logger.getLogger(StorageDAOImpl.class.getName()).log(Level.SEVERE, null, e);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
     @Override
     public boolean addCurrency(Storage storage, Currency currency) {
 
         // для автоматического закрытия ресурсов
-        try (PreparedStatement stmt = SQLiteConnection.getConnection().prepareStatement("insert into " + CURRENCY_TABLE + "(currency_code, storage_id, amount) values(?,?,?)");) {
+        try (PreparedStatement stmt = SQLiteConnection.getConnection()
+                .prepareStatement("insert into "
+                        + CURRENCY_AMOUNT_TABLE
+                        + "(currency_code, storage_id) values(?,?)")) {
 
             stmt.setString(1, currency.getCurrencyCode());
             stmt.setLong(2, storage.getId());
-            stmt.setBigDecimal(3, BigDecimal.ZERO);
 
-            if (stmt.executeUpdate() == 1) { // если была обновлена 1 запись
+
+            if (stmt.executeUpdate() == 1) { // если была добавлена 1 запись
                 return true;
             }
 
@@ -57,14 +84,16 @@ public class StorageDAOImpl implements StorageDAO {
     @Override
     public boolean deleteCurrency(Storage storage, Currency currency) {
 
-        try (PreparedStatement stmt = com.omelchenkoaleks.core.database
-                .SQLiteConnection.getConnection()
-                .prepareStatement("delete from " + CURRENCY_TABLE + " where storage_id=? and currency_code=?");) {
+        try (PreparedStatement stmt = SQLiteConnection.getConnection()
+                .prepareStatement("delete from "
+                        + CURRENCY_AMOUNT_TABLE
+                        + " where storage_id=? and currency_code=?")) {
 
             stmt.setLong(1, storage.getId());
             stmt.setString(2, currency.getCurrencyCode());
 
-            if (stmt.executeUpdate() == 1) { // если была обновлена 1 запись
+
+            if (stmt.executeUpdate() == 1) {  // если была обновлена 1 запись
                 return true;
             }
 
@@ -77,83 +106,85 @@ public class StorageDAOImpl implements StorageDAO {
         return false;
     }
 
-//    @Override
-//    public boolean updateAmount(Storage storage, BigDecimal amount) {
-//        return false;
-//    }
-
 
     @Override
     public boolean updateAmount(Storage storage, Currency currency, BigDecimal amount) {
+
+        try (PreparedStatement stmt = SQLiteConnection.getConnection()
+                .prepareStatement("update "
+                        + CURRENCY_AMOUNT_TABLE
+                        + " set amount=? where storage_id=? and currency_code=?")) {
+
+            stmt.setBigDecimal(1, amount);
+            stmt.setLong(2, storage.getId());
+            stmt.setString(3, currency.getCurrencyCode());
+
+            if (stmt.executeUpdate() == 1) {
+                return true;
+            }
+
+        } catch (SQLException e) {
+            Logger.getLogger(StorageDAOImpl.class.getName()).log(Level.SEVERE, null, e);
+        }
+
         return false;
     }
 
-    public StorageDAOImpl() {
-        super();
-    }
 
     @Override
-    public List<Storage> getAll() {
+    public Storage get(long id) {
+        try (PreparedStatement stmt = SQLiteConnection.getConnection()
+                .prepareStatement("select * from " + STORAGE_TABLE + " where id=?")) {
 
-        storageList.clear();
+            stmt.setLong(1, id);
 
-        try (Statement stmt = SQLiteConnection.getConnection().createStatement();
-             ResultSet rs = stmt.executeQuery("select * from " + STORAGE_TABLE);) {
+            try (ResultSet rs = stmt.executeQuery();){
+                DefaultStorage storage = null;
 
-            while (rs.next()) {
-                DefaultStorage storage = new DefaultStorage();
-                storage.setId(rs.getLong("id"));
-                storage.setName(rs.getString("name"));
+                if (rs.next()){
+                    storage = new DefaultStorage();
+                    storage.setId(rs.getLong("id"));
+                    storage.setName(rs.getString("name"));
+                    storage.setParentId(rs.getLong("parent_id"));
+                }
 
-                long parentId = rs.getLong("parent_id");
-
-                treeConstructor.addToTree(parentId, storage, storageList);
+                return storage;
             }
 
-            return storageList;
-
-
-        } catch (SQLiteException e) {
-            Logger.getLogger(StorageDAOImpl.class.getName()).log(Level.SEVERE, null, e);
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getLogger(SourceDAOImpl.class.getName()).log(Level.SEVERE, null, e);
         }
 
         return null;
     }
 
-    @Override
-    public Storage get(long id) {
-        return null;
-    }
 
     @Override
     public boolean update(Storage storage) {
 
         try (PreparedStatement stmt = SQLiteConnection.getConnection()
-                .prepareStatement("update " + STORAGE_TABLE + " set name=? where id=?");) {
+                .prepareStatement("update " + STORAGE_TABLE + " set name=? where id=?")) {
 
-                stmt.setString(1, storage.getName());
-                stmt.setLong(2, storage.getId());
+            stmt.setString(1, storage.getName());
+            stmt.setLong(2, storage.getId());
 
-                if (stmt.executeUpdate() == 1) {
-                    return true;
-                }
+            if (stmt.executeUpdate() == 1) {
+                return true;
+            }
 
-        } catch (SQLiteException e) {
-            Logger.getLogger(StorageDAOImpl.class.getName()).log(Level.SEVERE, null, e);
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getLogger(StorageDAOImpl.class.getName()).log(Level.SEVERE, null, e);
         }
 
         return false;
     }
 
+
     @Override
     public boolean delete(Storage storage) {
 
         try (PreparedStatement stmt = SQLiteConnection.getConnection()
-                .prepareStatement("delete from " + STORAGE_TABLE + " where id=?");) {
+                .prepareStatement("delete from " + STORAGE_TABLE + " where id=?")) {
 
             stmt.setLong(1, storage.getId());
 
@@ -161,10 +192,8 @@ public class StorageDAOImpl implements StorageDAO {
                 return true;
             }
 
-        } catch (SQLiteException e) {
-            Logger.getLogger(StorageDAOImpl.class.getName()).log(Level.SEVERE, null, e);
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getLogger(StorageDAOImpl.class.getName()).log(Level.SEVERE, null, e);
         }
 
         return false;
