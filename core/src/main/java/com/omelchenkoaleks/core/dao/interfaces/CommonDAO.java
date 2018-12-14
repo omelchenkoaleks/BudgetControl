@@ -7,9 +7,7 @@ public interface CommonDAO<T> {
 
     List<T> getAll();
     T get(long id);
-
-    // используем boolean, чтобы легко можно быдо удовстоверяться
-    // - прошла ли операция успешно
-    boolean update(T storage);
-    boolean delete(T storage);
+    boolean update(T object);// boolean - чтобы удостовериться, что операция прошла успешно
+    boolean delete(T object);
+    boolean add(T object);
 }

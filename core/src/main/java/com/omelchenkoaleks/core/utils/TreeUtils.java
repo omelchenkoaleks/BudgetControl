@@ -26,7 +26,7 @@ public class TreeUtils<T extends TreeNode> {
     }
 
     private TreeNode recursiveSearch(long parentId, TreeNode child) {
-        for (TreeNode node : child.getChild()) {
+        for (TreeNode node : child.getChilds()) {
             if (node.getId() == parentId) {
                 return node;
             } else if (node.hasChilds()) {

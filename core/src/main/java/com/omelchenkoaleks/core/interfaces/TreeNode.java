@@ -12,13 +12,15 @@ public interface TreeNode {
 
     long getParentId();
 
+    void setId(long id); // установить id
+
     long getId(); // каждый элемент дерева должен иметь свой уникальный идентификатор
 
     void add(TreeNode child); // добавить один дочерний элемент
 
     void remove(TreeNode child); // удалить один дочерний элемент
 
-    List<TreeNode> getChild(); // дочерних элементов может быть любое количество
+    List<TreeNode> getChilds(); // дочерних элементов может быть любое количество
 
     TreeNode getChild(long id); // получение дочернего элемента по id
 
@@ -28,4 +30,6 @@ public interface TreeNode {
     void setParent(TreeNode parent); // установка родительского элемента
 
     boolean hasChilds(); // проверяет, если дочерние элементы
+
+    boolean hasParent(); // проверяет, есть ли родитель
 }
