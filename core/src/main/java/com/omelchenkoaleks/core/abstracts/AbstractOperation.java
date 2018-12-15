@@ -5,7 +5,7 @@ import java.util.Calendar;
 import com.omelchenkoaleks.core.enums.OperationType;
 import com.omelchenkoaleks.core.interfaces.Operation;
 
-public abstract class AbstractOperation implements Operation{
+public abstract class AbstractOperation implements Operation, Comparable<Operation>{
 
     private long id;
     private Calendar dateTime; // дата и время выполнения операции (подставлять автоматически при создании, но можно будет изменять в любое время)
@@ -62,5 +62,10 @@ public abstract class AbstractOperation implements Operation{
 
     public void setOperationType(OperationType operationType) {
         this.operationType = operationType;
+    }
+
+    @Override
+    public int compareTo(Operation o) {
+        return o.getDateTime().compareTo(dateTime);
     }
 }

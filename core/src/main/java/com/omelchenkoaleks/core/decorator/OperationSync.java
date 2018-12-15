@@ -1,6 +1,7 @@
 package com.omelchenkoaleks.core.decorator;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -66,6 +67,7 @@ public class OperationSync implements OperationDAO {
 
     @Override
     public List<Operation> getAll() {
+        Collections.sort(operationList); // перед показом сортируем по дате
         return operationList;
     }
 
@@ -74,9 +76,15 @@ public class OperationSync implements OperationDAO {
         return identityMap.get(id);
     }
 
+
     @Override
+    /*
+        при обновлении операции:
+            откат предыдущих значений операции (удаление старой операции)
+            добавление новой информации (добавление обновленной операции)
+     */
     public boolean update(Operation operation) {
-        if (operationDAO.update(operation)) {
+        if (delete(operationDAO.get(operation.getId())) && add(operation)) {
             return true;
         }
         return false;
